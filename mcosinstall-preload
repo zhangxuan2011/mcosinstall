@@ -1,0 +1,13 @@
+#!/bin/python
+import os
+import signal
+
+
+def receive_interrupt():
+    pass
+
+
+signal.signal(signal.SIGINT, receive_interrupt)
+
+os.system("fbterm python ./mcosinstall.py")
+# os.system("poweroff")
