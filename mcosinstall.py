@@ -4,9 +4,12 @@ from time import sleep
 
 
 def main_menu(guide_url=None):
+    execcmd("clear")
     print("欢迎安装MinecraftOS!\n"
           f"如果您要正确地安装MinecraftOS,请阅读{guide_url}上的安装方式安装\n"
-          f"否则,如果造成硬盘数据丢失，我们概不负责!!!!!!!\n\n"
+          f"否则,如果造成硬盘数据丢失，我们概不负责!!!!!!!\n"
+          f"MinecraftOS安装完后的用户名:Minecraft\n"
+          f"密码:123456(root也是一样)\n\n"
           f"主菜单: \n\t"
           f"1.分区\n\t"
           f"2.格式化\n\t"
@@ -18,7 +21,7 @@ def main_menu(guide_url=None):
 
 def main():
     main_menu()
-    choice = input('输入你的选择(1-6): ')
+    choice = input('输入你的选择(1-7): ')
     if choice == "1":
         askstep("partdisk")
         main()
