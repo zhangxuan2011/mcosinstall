@@ -12,7 +12,6 @@ def fileexist(filename):
     else:
         f.close()
         return True
-
 def askstep(step):
     """
 
@@ -84,6 +83,7 @@ def askstep(step):
         os.chdir("/")
         execcmd(f"e2label /dev/{rootdev} MinecraftOS")  # 改标签
         execcmd(f"mount /dev/{rootdev} /squashfs-root") # 挂载主分区(注意:根目录要创建squashfs-root目录)
+        execcmd("rm -rf /squashfs-root/*")
         execcmd(f"unsquashfs /usr/share/rootfs/rootfs.sfs")
         execcmd("genfstab -U /squashfs-root > /squashfs-root/etc/fstab")
         print("命令执行完成!")
@@ -125,8 +125,9 @@ def askstep(step):
         # 检查启动方式
         if path.exists("/sys/firmware/efi/efivars"):
             bootmode = "efi"
-            with open("/sys/firmware/efi/fw_platform_size") as f:
+            with open("/sys/firmware/efi/fw_platform_size", mode="r") as f:
                 efisize = f.read()
+            instdev = None
         else:
             bootmode = "legacy"
             efisize = None
@@ -136,10 +137,15 @@ def askstep(step):
                 print("错误:磁盘不存在!!!!!!")
                 sleep(3)
                 askstep("grubinstall")
+        os.chdir("/usr/share/mcosinstall")
+        execcmd("chmod 755 ./runchroot/main")
         execcmd("cp -r runchroot /squashfs-root")
-        with open("/squashfs-root/runchroot/info.py") as f2:
-            f2.write(f"class info:\n\tbootmode = {bootmode}\n\tefisize={efisize}\n\tinstdev = {instdev}")
-        execcmd("arch-chroot /squashfs-root /runchroot/main ")
+        with open("/squashfs-root/runchroot/info.py", mode="w+") as f2:
+            f2.write("class info:"
+                     f"\n\tbootmode = \"{bootmode}\""
+                     f"\n\tinstdev = \"{instdev}\""
+                     f"\n\tefisize = {efisize}")
+        execcmd("arch-chroot /squashfs-root /runchroot/main > mcosinstall.log")
         print("命令执行完毕!!!")
         sleep(3)
         return
