@@ -1,0 +1,25 @@
+#!/bin/python
+
+
+from info import info
+from os import system as execcmd
+import sys
+
+
+bootmode = info.bootmode
+instdev = info.instdev
+efisize = info.efisize
+
+if bootmode == "efi":
+    if efisize == 64:
+        execcmd("grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=MinecraftOS --recheck")
+    elif efisize == 32:
+        execcmd("grub-install --target=i386-efi --efi-directory=/boot/efi --bootloader-id=MinecraftOS --recheck")
+elif bootmode == "legacy":
+    execcmd(f"grub-install --target=i386-pc /dev/{instdev} --recheck")
+else:
+    print("Not available number!!!")
+
+execcmd("grub-mkconfig -o /boot/grub/grub.cfg")
+
+sys.exit(0)
